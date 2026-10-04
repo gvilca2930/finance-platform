@@ -7,7 +7,7 @@ const tokenDurationSchema = z.string().regex(/^\d+(?:ms|s|m|h|d|w|y)$/, {
 const environmentSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'test', 'production']),
-    PORT: z.coerce.number().int().min(1).max(65_535),
+    PORT: z.coerce.number().int().min(1).max(65_535).default(3000),
     DATABASE_URL: z.string().url().startsWith('postgresql://'),
     JWT_ACCESS_SECRET: z.string().min(32),
     JWT_REFRESH_SECRET: z.string().min(32),
