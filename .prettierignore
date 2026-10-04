@@ -1,0 +1,11 @@
+node_modules
+dist
+.next
+.turbo
+coverage
+pnpm-lock.yaml
+apps/api/src/generated/prisma
+apps/api/prisma/migrations
+apps/web/next-env.d.ts
+.visual-edge-desktop
+.visual-edge-mobile

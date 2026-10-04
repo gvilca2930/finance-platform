@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.pnpm-home/
+.corepack-cache/
+.npm-cache/
+
+# Environment files (examples are versioned)
+.env
+.env.*
+!.env.example
+!**/.env.example
+!**/.env.*.example
+
+# Builds and caches
+dist/
+.next/
+.turbo/
+.vercel/
+coverage/
+.visual-artifacts/
+.visual-edge-desktop/
+.visual-edge-mobile/
+*.tsbuildinfo
+apps/api/src/generated/prisma/
+
+# Local review screenshots
+/login-desktop.png
+/login-mobile.png
+
+# Expo / React Native
+.expo/
+.expo-shared/
+web-build/
+apps/mobile/android/
+apps/mobile/ios/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

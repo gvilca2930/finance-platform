@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: finance_user
+          POSTGRES_PASSWORD: ci_only
+          POSTGRES_DB: finance_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U finance_user -d finance_db"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      NODE_ENV: test
+      PORT: 3001
+      DATABASE_URL: postgresql://finance_user:ci_only@localhost:5432/finance_db?schema=public
+      JWT_ACCESS_SECRET: ci_access_secret_at_least_32_characters
+      JWT_REFRESH_SECRET: ci_refresh_secret_at_least_32_characters
+      JWT_ACCESS_EXPIRES_IN: 15m
+      JWT_REFRESH_EXPIRES_IN: 30d
+      CORS_ORIGINS: http://localhost:3000
+      SWAGGER_ENABLED: false
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.17.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.11.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:validate
+      - run: pnpm db:migrate:deploy
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm test:e2e
+      - run: pnpm build

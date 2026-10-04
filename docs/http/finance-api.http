@@ -1,0 +1,82 @@
+@baseUrl = http://localhost:3001/api/v1
+@email = usuario@example.com
+@password = {{$dotenv FINANCE_TEST_PASSWORD}}
+@accessToken = PEGAR_ACCESS_TOKEN
+@refreshToken = PEGAR_REFRESH_TOKEN
+@workspaceId = PEGAR_WORKSPACE_ID
+@accountId = PEGAR_ACCOUNT_ID
+@categoryId = PEGAR_CATEGORY_ID
+
+### Health
+GET {{baseUrl}}/health
+
+### Register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}",
+  "firstName": "Usuario",
+  "paternalLastName": "Prueba"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{ "email": "{{email}}", "password": "{{password}}" }
+
+### Create BUSINESS workspace
+POST {{baseUrl}}/workspaces
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{ "name": "Mi negocio", "type": "BUSINESS" }
+
+### Create account
+POST {{baseUrl}}/workspaces/{{workspaceId}}/accounts
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{ "name": "Cuenta principal", "type": "BANK", "initialBalance": "1000.00" }
+
+### List categories
+GET {{baseUrl}}/workspaces/{{workspaceId}}/categories
+Authorization: Bearer {{accessToken}}
+
+### Create expense
+POST {{baseUrl}}/workspaces/{{workspaceId}}/transactions
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "accountId": "{{accountId}}",
+  "categoryId": "{{categoryId}}",
+  "type": "EXPENSE",
+  "amount": "59.90",
+  "transactionDate": "2026-09-27",
+  "description": "Almuerzo"
+}
+
+### Balances
+GET {{baseUrl}}/workspaces/{{workspaceId}}/balances
+Authorization: Bearer {{accessToken}}
+
+### Dashboard
+GET {{baseUrl}}/workspaces/{{workspaceId}}/dashboard?from=2026-09-01&to=2026-09-30
+Authorization: Bearer {{accessToken}}
+
+### Monthly report
+GET {{baseUrl}}/workspaces/{{workspaceId}}/reports/monthly-summary?from=2026-09-01&to=2026-09-30
+Authorization: Bearer {{accessToken}}
+
+### Refresh
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{ "refreshToken": "{{refreshToken}}" }
+
+### Logout
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{accessToken}}

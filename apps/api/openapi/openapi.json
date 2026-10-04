@@ -1,0 +1,3288 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "status": "ok",
+                    "database": "up"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Check API and PostgreSQL availability",
+        "tags": ["health"]
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered without authentication secrets"
+          },
+          "409": {
+            "description": "Email already exists"
+          }
+        },
+        "summary": "Register a user and profile",
+        "tags": ["auth"]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Access token, rotating refresh token, and safe user"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        },
+        "summary": "Authenticate and create an AuthSession",
+        "tags": ["auth"]
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "New access and refresh tokens"
+          },
+          "401": {
+            "description": "Invalid, expired, reused, or revoked refresh token"
+          }
+        },
+        "summary": "Rotate a refresh token and issue a new token pair",
+        "tags": ["auth"]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Session revoked"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Revoke the current AuthSession",
+        "tags": ["auth"]
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "operationId": "AuthController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Current user without authentication secrets"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get the authenticated user and profile",
+        "tags": ["auth"]
+      }
+    },
+    "/api/v1/users/me": {
+      "get": {
+        "operationId": "UsersController_getMe",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Current user without authentication secrets"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get the authenticated user and profile",
+        "tags": ["users"]
+      }
+    },
+    "/api/v1/users/me/profile": {
+      "patch": {
+        "operationId": "UsersController_updateProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated user and profile"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update editable fields in the current user profile",
+        "tags": ["users"]
+      }
+    },
+    "/api/v1/workspaces": {
+      "post": {
+        "operationId": "WorkspacesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWorkspaceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a workspace, OWNER membership, and default categories",
+        "tags": ["workspaces"]
+      },
+      "get": {
+        "operationId": "WorkspacesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List workspaces available to the current user",
+        "tags": ["workspaces"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}": {
+      "get": {
+        "operationId": "WorkspacesController_get",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["workspaces"]
+      },
+      "patch": {
+        "operationId": "WorkspacesController_update",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWorkspaceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["workspaces"]
+      },
+      "delete": {
+        "operationId": "WorkspacesController_remove",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["workspaces"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/business-profile": {
+      "get": {
+        "operationId": "BusinessProfileController_get",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["business-profile"]
+      },
+      "put": {
+        "operationId": "BusinessProfileController_put",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BusinessProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["business-profile"]
+      },
+      "patch": {
+        "operationId": "BusinessProfileController_patch",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBusinessProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["business-profile"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/members": {
+      "get": {
+        "operationId": "MembersController_list",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["workspace-members"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/members/{memberId}": {
+      "get": {
+        "operationId": "MembersController_get",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "memberId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["workspace-members"]
+      },
+      "patch": {
+        "operationId": "MembersController_update",
+        "parameters": [
+          {
+            "name": "memberId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMemberDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["workspace-members"]
+      },
+      "delete": {
+        "operationId": "MembersController_remove",
+        "parameters": [
+          {
+            "name": "memberId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["workspace-members"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/invitations": {
+      "post": {
+        "operationId": "InvitationsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvitationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["workspace-invitations"]
+      },
+      "get": {
+        "operationId": "InvitationsController_list",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["workspace-invitations"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/invitations/{invitationId}": {
+      "delete": {
+        "operationId": "InvitationsController_remove",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "invitationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["workspace-invitations"]
+      }
+    },
+    "/api/v1/workspace-invitations/me": {
+      "get": {
+        "operationId": "AcceptInvitationController_listMine",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MyInvitationResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List pending invitations for the authenticated user email",
+        "tags": ["workspace-invitations"]
+      }
+    },
+    "/api/v1/workspace-invitations/{invitationId}/accept": {
+      "post": {
+        "operationId": "AcceptInvitationController_acceptMine",
+        "parameters": [
+          {
+            "name": "invitationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Workspace membership created"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Accept an invitation belonging to the authenticated user",
+        "tags": ["workspace-invitations"]
+      }
+    },
+    "/api/v1/workspace-invitations/{invitationId}/reject": {
+      "post": {
+        "operationId": "AcceptInvitationController_rejectMine",
+        "parameters": [
+          {
+            "name": "invitationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyInvitationResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reject an invitation belonging to the authenticated user",
+        "tags": ["workspace-invitations"]
+      }
+    },
+    "/api/v1/workspace-invitations/accept": {
+      "post": {
+        "operationId": "AcceptInvitationController_accept",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcceptInvitationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Accept an invitation using its one-time token",
+        "tags": ["workspace-invitations"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/accounts": {
+      "post": {
+        "operationId": "AccountsController_create",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccountDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a financial account",
+        "tags": ["accounts"]
+      },
+      "get": {
+        "operationId": "AccountsController_list",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["accounts"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/accounts/{accountId}": {
+      "get": {
+        "operationId": "AccountsController_get",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["accounts"]
+      },
+      "patch": {
+        "operationId": "AccountsController_update",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAccountDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["accounts"]
+      },
+      "delete": {
+        "operationId": "AccountsController_remove",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["accounts"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/accounts/{accountId}/access": {
+      "put": {
+        "operationId": "AccountsController_setAccess",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountAccessDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Store account access grants reserved for future restricted accounts",
+        "tags": ["accounts"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/accounts/{accountId}/balance": {
+      "get": {
+        "operationId": "AccountsController_balance",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["accounts"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/balances": {
+      "get": {
+        "operationId": "BalancesController_get",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["balances"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/categories": {
+      "post": {
+        "operationId": "CategoriesController_create",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["categories"]
+      },
+      "get": {
+        "operationId": "CategoriesController_list",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["categories"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/categories/{categoryId}": {
+      "get": {
+        "operationId": "CategoriesController_get",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["categories"]
+      },
+      "patch": {
+        "operationId": "CategoriesController_update",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["categories"]
+      },
+      "delete": {
+        "operationId": "CategoriesController_remove",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["categories"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/transactions": {
+      "post": {
+        "operationId": "TransactionsController_create",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTransactionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["transactions"]
+      },
+      "get": {
+        "operationId": "TransactionsController_list",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["INCOME", "EXPENSE"]
+            }
+          },
+          {
+            "name": "accountId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdByUserId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["transactions"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/transactions/{transactionId}": {
+      "get": {
+        "operationId": "TransactionsController_get",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transactionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["transactions"]
+      },
+      "patch": {
+        "operationId": "TransactionsController_update",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transactionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTransactionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["transactions"]
+      },
+      "delete": {
+        "operationId": "TransactionsController_remove",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transactionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["transactions"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/transfers": {
+      "post": {
+        "operationId": "TransfersController_create",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTransferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["transfers"]
+      },
+      "get": {
+        "operationId": "TransfersController_list",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["transfers"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/transfers/{transferId}": {
+      "get": {
+        "operationId": "TransfersController_get",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transferId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["transfers"]
+      },
+      "patch": {
+        "operationId": "TransfersController_update",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transferId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTransferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["transfers"]
+      },
+      "delete": {
+        "operationId": "TransfersController_remove",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "transferId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["transfers"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/budgets": {
+      "post": {
+        "operationId": "BudgetsController_create",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBudgetDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["budgets"]
+      },
+      "get": {
+        "operationId": "BudgetsController_list",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "month",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "year",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["budgets"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/budgets/{budgetId}": {
+      "get": {
+        "operationId": "BudgetsController_get",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "budgetId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["budgets"]
+      },
+      "patch": {
+        "operationId": "BudgetsController_update",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "budgetId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBudgetDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["budgets"]
+      },
+      "delete": {
+        "operationId": "BudgetsController_remove",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "budgetId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["budgets"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/budgets/{budgetId}/progress": {
+      "get": {
+        "operationId": "BudgetsController_progress",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "budgetId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["budgets"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/recurring-transactions": {
+      "post": {
+        "operationId": "RecurringTransactionsController_create",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRecurringTransactionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["recurring-transactions"]
+      },
+      "get": {
+        "operationId": "RecurringTransactionsController_list",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Object"
+                }
+              ]
+            }
+          },
+          {
+            "name": "active",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["recurring-transactions"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/recurring-transactions/{id}": {
+      "get": {
+        "operationId": "RecurringTransactionsController_get",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["recurring-transactions"]
+      },
+      "patch": {
+        "operationId": "RecurringTransactionsController_update",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRecurringTransactionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["recurring-transactions"]
+      },
+      "delete": {
+        "operationId": "RecurringTransactionsController_remove",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["recurring-transactions"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/reports/monthly-summary": {
+      "get": {
+        "operationId": "ReportsController_monthly",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-09-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-09-30",
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdByUserId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["reports"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/reports/income-expense": {
+      "get": {
+        "operationId": "ReportsController_incomeExpense",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-09-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-09-30",
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdByUserId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["reports"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/reports/category-breakdown": {
+      "get": {
+        "operationId": "ReportsController_categories",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-09-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-09-30",
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdByUserId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["reports"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/reports/cash-flow": {
+      "get": {
+        "operationId": "ReportsController_cashFlow",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-09-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-09-30",
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdByUserId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "groupBy",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "month",
+              "type": "string",
+              "enum": ["day", "week", "month"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["reports"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/reports/account-balances": {
+      "get": {
+        "operationId": "ReportsController_balances",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["reports"]
+      }
+    },
+    "/api/v1/workspaces/{workspaceId}/dashboard": {
+      "get": {
+        "operationId": "DashboardController_get",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-09-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-09-30",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": ["dashboard"]
+      }
+    }
+  },
+  "info": {
+    "title": "Finance Platform API",
+    "description": "MVP REST API for authentication, multi-tenant workspaces, financial operations, budgets, dashboard, and reports.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "usuario@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "minLength": 8,
+            "writeOnly": true
+          },
+          "firstName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "paternalLastName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "middleName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "maternalLastName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "phone": {
+            "type": "string",
+            "maxLength": 30
+          },
+          "secondaryPhone": {
+            "type": "string",
+            "maxLength": 30
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "example": "1990-01-31"
+          },
+          "documentType": {
+            "type": "string",
+            "maxLength": 30
+          },
+          "documentNumber": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "department": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "province": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "district": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "addressLine1": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "addressLine2": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "postalCode": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "countryCode": {
+            "type": "string",
+            "default": "PE"
+          },
+          "preferredCurrency": {
+            "type": "string",
+            "default": "PEN"
+          },
+          "timezone": {
+            "type": "string",
+            "default": "America/Lima",
+            "maxLength": 64
+          },
+          "language": {
+            "type": "string",
+            "default": "es",
+            "enum": ["es", "en"]
+          }
+        },
+        "required": ["email", "password", "firstName", "paternalLastName"]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "usuario@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "minLength": 1,
+            "writeOnly": true
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "RefreshDto": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh token previously issued by the API",
+            "writeOnly": true
+          }
+        },
+        "required": ["refreshToken"]
+      },
+      "UpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "middleName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "paternalLastName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "maternalLastName": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "phone": {
+            "type": "string",
+            "maxLength": 30
+          },
+          "secondaryPhone": {
+            "type": "string",
+            "maxLength": 30
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "example": "1990-01-31"
+          },
+          "documentType": {
+            "type": "string",
+            "maxLength": 30
+          },
+          "documentNumber": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "countryCode": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "department": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "province": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "district": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "addressLine1": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "addressLine2": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "postalCode": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "timezone": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "preferredCurrency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "language": {
+            "type": "string",
+            "enum": ["es", "en"]
+          }
+        }
+      },
+      "CreateWorkspaceDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Mi negocio"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["PERSONAL", "BUSINESS"]
+          },
+          "currencyCode": {
+            "type": "string",
+            "default": "PEN"
+          },
+          "countryCode": {
+            "type": "string",
+            "default": "PE"
+          },
+          "timezone": {
+            "type": "string",
+            "default": "America/Lima"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "type"]
+      },
+      "UpdateWorkspaceDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Mi negocio"
+          },
+          "currencyCode": {
+            "type": "string",
+            "default": "PEN"
+          },
+          "countryCode": {
+            "type": "string",
+            "default": "PE"
+          },
+          "timezone": {
+            "type": "string",
+            "default": "America/Lima"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "BusinessProfileDto": {
+        "type": "object",
+        "properties": {
+          "legalName": {
+            "type": "string"
+          },
+          "tradeName": {
+            "type": "string"
+          },
+          "taxId": {
+            "type": "string",
+            "description": "RUC for Peruvian businesses"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string",
+            "default": "PE"
+          },
+          "department": {
+            "type": "string"
+          },
+          "province": {
+            "type": "string"
+          },
+          "district": {
+            "type": "string"
+          },
+          "addressLine1": {
+            "type": "string"
+          },
+          "addressLine2": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          }
+        },
+        "required": ["legalName"]
+      },
+      "UpdateBusinessProfileDto": {
+        "type": "object",
+        "properties": {
+          "legalName": {
+            "type": "string"
+          },
+          "tradeName": {
+            "type": "string"
+          },
+          "taxId": {
+            "type": "string",
+            "description": "RUC for Peruvian businesses"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "website": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string",
+            "default": "PE"
+          },
+          "department": {
+            "type": "string"
+          },
+          "province": {
+            "type": "string"
+          },
+          "district": {
+            "type": "string"
+          },
+          "addressLine1": {
+            "type": "string"
+          },
+          "addressLine2": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateMemberDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": ["OWNER", "ADMIN", "STAFF", "VIEWER"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ACTIVE", "SUSPENDED"]
+          }
+        }
+      },
+      "CreateInvitationDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["ADMIN", "STAFF", "VIEWER"]
+          },
+          "expiresInDays": {
+            "type": "object",
+            "default": 7,
+            "minimum": 1,
+            "maximum": 30
+          }
+        },
+        "required": ["email", "role"]
+      },
+      "InvitationWorkspaceResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["PERSONAL", "BUSINESS"]
+          }
+        },
+        "required": ["id", "name", "type"]
+      },
+      "InvitationSenderResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": ["id", "name"]
+      },
+      "MyInvitationResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "workspace": {
+            "$ref": "#/components/schemas/InvitationWorkspaceResponseDto"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["OWNER", "ADMIN", "STAFF", "VIEWER"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "ACCEPTED", "REJECTED", "EXPIRED", "CANCELLED"]
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "invitedBy": {
+            "$ref": "#/components/schemas/InvitationSenderResponseDto"
+          }
+        },
+        "required": ["id", "workspace", "role", "status", "expiresAt", "createdAt"]
+      },
+      "AcceptInvitationDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "writeOnly": true
+          }
+        },
+        "required": ["token"]
+      },
+      "CreateAccountDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["CASH", "BANK", "DIGITAL_WALLET", "SAVINGS", "OTHER"]
+          },
+          "currencyCode": {
+            "type": "string",
+            "description": "Defaults to workspace currency"
+          },
+          "initialBalance": {
+            "type": "string",
+            "example": "1000.00",
+            "default": "0.00"
+          },
+          "description": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": ["name", "type"]
+      },
+      "UpdateAccountDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["CASH", "BANK", "DIGITAL_WALLET", "SAVINGS", "OTHER"]
+          },
+          "initialBalance": {
+            "type": "string",
+            "example": "1000.00",
+            "default": "0.00"
+          },
+          "description": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "AccountAccessDto": {
+        "type": "object",
+        "properties": {
+          "userIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["userIds"]
+      },
+      "CreateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["INCOME", "EXPENSE"]
+          },
+          "parentId": {
+            "type": "object",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": ["name", "type"]
+      },
+      "UpdateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["INCOME", "EXPENSE"]
+          },
+          "parentId": {
+            "type": "object",
+            "nullable": true
+          },
+          "icon": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      },
+      "CreateTransactionDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["INCOME", "EXPENSE"]
+          },
+          "amount": {
+            "type": "string",
+            "example": "59.90"
+          },
+          "transactionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": ["accountId", "categoryId", "type", "amount", "transactionDate", "description"]
+      },
+      "Object": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateTransactionDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["INCOME", "EXPENSE"]
+          },
+          "amount": {
+            "type": "string",
+            "example": "59.90"
+          },
+          "transactionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateTransferDto": {
+        "type": "object",
+        "properties": {
+          "sourceAccountId": {
+            "type": "string"
+          },
+          "destinationAccountId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string",
+            "example": "100.00"
+          },
+          "transactionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": ["sourceAccountId", "destinationAccountId", "amount", "transactionDate"]
+      },
+      "UpdateTransferDto": {
+        "type": "object",
+        "properties": {
+          "sourceAccountId": {
+            "type": "string"
+          },
+          "destinationAccountId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string",
+            "example": "100.00"
+          },
+          "transactionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateBudgetDto": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string",
+            "example": "600.00"
+          },
+          "month": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "year": {
+            "type": "number"
+          },
+          "alertPercentage": {
+            "type": "string",
+            "example": "80.00"
+          }
+        },
+        "required": ["categoryId", "amount", "month", "year"]
+      },
+      "UpdateBudgetDto": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string",
+            "example": "600.00"
+          },
+          "month": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "year": {
+            "type": "number"
+          },
+          "alertPercentage": {
+            "type": "string",
+            "example": "80.00"
+          }
+        }
+      },
+      "CreateRecurringTransactionDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["INCOME", "EXPENSE"]
+          },
+          "amount": {
+            "type": "string"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": ["DAILY", "WEEKLY", "MONTHLY", "YEARLY"]
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "nextExecutionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "accountId",
+          "categoryId",
+          "type",
+          "amount",
+          "frequency",
+          "startDate",
+          "nextExecutionDate",
+          "description"
+        ]
+      },
+      "UpdateRecurringTransactionDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["INCOME", "EXPENSE"]
+          },
+          "amount": {
+            "type": "string"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": ["DAILY", "WEEKLY", "MONTHLY", "YEARLY"]
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "nextExecutionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean",
+            "default": true
+          }
+        }
+      }
+    }
+  }
+}

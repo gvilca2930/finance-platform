@@ -1,0 +1,7 @@
+{
+  "extends": "@finance/typescript-config/react-native.json",
+  "compilerOptions": {
+    "types": ["react", "react-native"]
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}

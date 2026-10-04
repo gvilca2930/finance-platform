@@ -1,0 +1,38 @@
+{
+  "name": "@finance/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint src --max-warnings=0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:visual": "node scripts/visual-smoke.mjs",
+    "test:invitation": "node scripts/invitation-smoke.mjs",
+    "test:errors": "node scripts/error-smoke.mjs"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
+    "@tanstack/react-query": "^5.104.0",
+    "lucide-react": "^1.48.0",
+    "next": "16.3.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-hook-form": "^7.89.0",
+    "recharts": "^3.10.1",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@finance/eslint-config": "workspace:*",
+    "@finance/typescript-config": "workspace:*",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "eslint": "9.39.1",
+    "playwright-core": "^1.63.0",
+    "typescript": "5.9.3",
+    "vitest": "^5.0.2"
+  }
+}
